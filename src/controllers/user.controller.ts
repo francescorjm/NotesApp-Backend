@@ -13,13 +13,13 @@ function createtoken(user: IUser){
   });
 }
 // Configuración de Nodemailer
-const transporter = nodemailer.createTransport({
-  service: 'tu_servicio_de_email',
-  auth: {
-    user: 'tu_email@dominio.com',
-    pass: 'tu_contraseña',
-  },
-});
+// const transporter = nodemailer.createTransport({
+//   service: 'tu_servicio_de_email',
+//   auth: {
+//     user: 'tu_email@dominio.com',
+//     pass: 'tu_contraseña',
+//   },
+// });
 
 // Comment this method out once everything is done
 export const testerRoute = (req: Request, res: Response) =>{
@@ -262,58 +262,58 @@ export const getUserData = async (req: Request, res: Response): Promise<Response
 
 }
 // Función para manejar la solicitud de restablecimiento de contraseña
-export const requestPasswordReset = async (req: Request, res: Response) => {
-  try {
-    const { email } = req.body;
-    const user = await User.findOne({ email });
+// export const requestPasswordReset = async (req: Request, res: Response) => {
+//   try {
+//     const { email } = req.body;
+//     const user = await User.findOne({ email });
 
-    if (!user) {
-      // No revelar si el correo electrónico está registrado por razones de seguridad
-      return res.status(200).send('Si tu email está registrado, recibirás un enlace para cambiar tu contraseña.');
-    }
+//     if (!user) {
+//       // No revelar si el correo electrónico está registrado por razones de seguridad
+//       return res.status(200).send('Si tu email está registrado, recibirás un enlace para cambiar tu contraseña.');
+//     }
 
-    const token = crypto.randomBytes(20).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 hora para expirar
+//     const token = crypto.randomBytes(20).toString('hex');
+//     user.resetPasswordToken = token;
+//     user.resetPasswordExpires = Date.now() + 3600000; // 1 hora para expirar
 
-    await user.save();
+//     await user.save();
 
-    const resetEmail = {
-      from: 'no-reply@tudominio.com',
-      to: user.email,
-      subject: 'Enlace para restablecimiento de contraseña',
-      text: `Estás recibiendo esto porque tú (o alguien más) ha solicitado el restablecimiento de la contraseña de tu cuenta.\n\n
-        Por favor haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso dentro de la próxima hora:\n\n
-        http://${req.headers.host}/reset-password/${token}\n\n
-        Si no lo solicitaste, por favor ignora este correo y tu contraseña permanecerá sin cambios.\n`
-    };
+//     const resetEmail = {
+//       from: 'no-reply@tudominio.com',
+//       to: user.email,
+//       subject: 'Enlace para restablecimiento de contraseña',
+//       text: `Estás recibiendo esto porque tú (o alguien más) ha solicitado el restablecimiento de la contraseña de tu cuenta.\n\n
+//         Por favor haz clic en el siguiente enlace, o pégalo en tu navegador para completar el proceso dentro de la próxima hora:\n\n
+//         http://${req.headers.host}/reset-password/${token}\n\n
+//         Si no lo solicitaste, por favor ignora este correo y tu contraseña permanecerá sin cambios.\n`
+//     };
 
-    await transporter.sendMail(resetEmail);
-    res.status(200).send('Un correo electrónico ha sido enviado a ' + user.email + ' con más instrucciones.');
-  } catch (error) {
-    // Manejar error
-    res.status(500).send('Error al solicitar el restablecimiento de la contraseña.');
-  }
-};
+//     await transporter.sendMail(resetEmail);
+//     res.status(200).send('Un correo electrónico ha sido enviado a ' + user.email + ' con más instrucciones.');
+//   } catch (error) {
+//     // Manejar error
+//     res.status(500).send('Error al solicitar el restablecimiento de la contraseña.');
+//   }
+// };
 
 // Función para manejar el restablecimiento de la contraseña
-export const resetPassword = async (req: Request, res: Response) => {
-  try {
-    const { token, newPassword } = req.body;
-    const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
+// export const resetPassword = async (req: Request, res: Response) => {
+//   try {
+//     const { token, newPassword } = req.body;
+//     const user = await User.findOne({ resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } });
 
-    if (!user) {
-      return res.status(400).send('Token de restablecimiento de contraseña es inválido o ha expirado.');
-    }
+//     if (!user) {
+//       return res.status(400).send('Token de restablecimiento de contraseña es inválido o ha expirado.');
+//     }
 
-    user.password = newPassword; // Aquí debes asegurarte de hashear la contraseña
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
+//     user.password = newPassword; // Aquí debes asegurarte de hashear la contraseña
+//     user.resetPasswordToken = undefined;
+//     user.resetPasswordExpires = undefined;
 
-    await user.save();
-    res.status(200).send('Tu contraseña ha sido actualizada.');
-  } catch (error) {
-    // Manejar error
-    res.status(500).send('Error al restablecer la contraseña.');
-  }
-};
+//     await user.save();
+//     res.status(200).send('Tu contraseña ha sido actualizada.');
+//   } catch (error) {
+//     // Manejar error
+//     res.status(500).send('Error al restablecer la contraseña.');
+//   }
+// };
